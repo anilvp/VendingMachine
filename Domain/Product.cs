@@ -2,6 +2,7 @@
 
 public class Product
 {
+
     public Product(int id, string name, int price, int quantity)
     {
         Id = id;
@@ -15,6 +16,7 @@ public class Product
         Quantity += quantity;
     }
 
+
     public int Id { get; private set; }
 
     public string Name { get; private set; }
@@ -22,4 +24,5 @@ public class Product
     public int Price { get; private set; }
 
     public int Quantity { get; private set; }
+
 }

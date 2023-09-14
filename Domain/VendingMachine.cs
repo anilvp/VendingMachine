@@ -2,6 +2,7 @@
 
 public class VendingMachine
 {
+
     public VendingMachine() 
     {
         Products = new Product[9];
@@ -153,9 +154,11 @@ public class VendingMachine
         return change;
     }
 
+
     public Product?[] Products { get; private set; }
 
     public Dictionary<int, int> Bank { get; private set; }
 
     public int Balance { get; private set; }
+
 }
