@@ -3,24 +3,34 @@
 public class VendingMachine
 {
 
-    public VendingMachine() 
+    public VendingMachine(int[] currencyDenominations) 
     {
         Products = new Product[9];
-        Bank = new Dictionary<int, int>()
+        Bank = new Dictionary<int, int>();
+        for (int i = 0;  i < currencyDenominations.Length; i++)
         {
-            {1, 0 },
-            {2, 0 },
-            {5, 0 },
-            {10, 0 },
-            {20, 0 },
-            {50, 0 },
-            {100, 0 },
-            {200, 0 }
-        };
+            Bank[currencyDenominations[i]] = 0;
+        }
         Balance = 0;
     }
 
-    public void AddProduct(int location, int productId, string productName, int price, uint quantity)
+    public void AddProduct(int location, int productId, string productName, uint price)
+    {
+        if (location < 0 || location > 8)
+        {
+            throw new ArgumentException("Location is out of range");
+        }
+        else if (Products[location] != null)
+        {
+            throw new Exception($"Location {location} is already stocked. Use RemoveProduct first.");
+        }
+        else
+        {
+            Products[location] = new Product(productId, productName, price, 0);
+        }
+    }
+
+    public void AddStock(int location, int productId, uint quantity)
     {
         if (location < 0 || location > 8)
         {
@@ -32,15 +42,15 @@ public class VendingMachine
         }
         else if (Products[location] == null)
         {
-            Products[location] = new Product(productId, productName, price, (int)quantity);
+            throw new Exception($"Location {location} is unconfigured. Use AddProduct first.");
         }
-        else if (Products[location].Id == productId)
+        else if (Products[location].Id != productId)
         {
-            Products[location].ChangeProductQuantity((int)quantity);
+            throw new Exception($"Location {location} is stocked with a different product");
         }
         else
         {
-            throw new Exception($"Location {location} is stocked with a different product");
+            Products[location].ChangeProductQuantity((int)quantity);
         }
     }
 
@@ -105,7 +115,11 @@ public class VendingMachine
         }
         else if (Products[location] == null)
         {
-            throw new Exception($"Location {location} is empty");
+            throw new Exception($"Location {location} is unconfigured");
+        }
+        else if (Products[location].Quantity < 1)
+        {
+            return "Product is out of stock";
         }
         else if (Balance < Products[location].Price)
         {
@@ -113,14 +127,9 @@ public class VendingMachine
         }
         else
         {
-            Balance -= Products[location].Price;
+            Balance -= (int)Products[location].Price;
             Products[location].ChangeProductQuantity(-1);
-            string name = Products[location].Name;
-            if (Products[location].Quantity == 0)
-            {
-                Products[location] = null;
-            }
-            return name;
+            return Products[location].Name;
         }
     }
 

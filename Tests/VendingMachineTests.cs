@@ -9,53 +9,88 @@ public class VendingMachineTests
     [TestMethod]
     public void AddProduct_ValidInput_ProductExistsInLocation()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
-        vendingMachine.AddProduct(2, 1, "Coke", 120, 2);
+        vendingMachine.AddProduct(2, 1, "Coke", 120);
 
         Assert.IsNotNull(vendingMachine.Products[2]);
         Assert.AreEqual(1, vendingMachine.Products[2].Id);
         Assert.AreEqual("Coke", vendingMachine.Products[2].Name);
-        Assert.AreEqual(120, vendingMachine.Products[2].Price);
-        Assert.AreEqual(2, vendingMachine.Products[2].Quantity);
+        Assert.AreEqual(120, (int)vendingMachine.Products[2].Price);
+        Assert.AreEqual(0, vendingMachine.Products[2].Quantity);
     }
 
     [TestMethod]
     public void AddProduct_InvalidLocation_ArgumentExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
-        Assert.ThrowsException<ArgumentException>(() => vendingMachine.AddProduct(9, 1, "Coke", 120, 1));
-    }
-
-    [TestMethod]
-    public void AddProduct_InvalidQuantity_ArgumentExceptionThrown()
-    {
-        VendingMachine vendingMachine = new VendingMachine();
-
-        Assert.ThrowsException<ArgumentException>(() => vendingMachine.AddProduct(2, 1, "Coke", 120, 0));
-    }
-
-    [TestMethod]
-    public void AddProduct_AddExistingProduct_QuantityIncreased()
-    {
-        VendingMachine vendingMachine = new VendingMachine();
-
-        vendingMachine.AddProduct(2, 1, "Coke", 120, 2);
-        vendingMachine.AddProduct(2, 1, "Coke", 120, 2);
-
-        Assert.IsNotNull(vendingMachine.Products[2]);
-        Assert.AreEqual(4, vendingMachine.Products[2].Quantity);
+        Assert.ThrowsException<ArgumentException>(() => vendingMachine.AddProduct(9, 1, "Coke", 120));
     }
 
     [TestMethod]
     public void AddProduct_AddDifferentProduct_ExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
-        vendingMachine.AddProduct(2, 1, "Coke", 120, 1);
+        vendingMachine.AddProduct(2, 1, "Coke", 120);
 
-        Assert.ThrowsException<Exception>(() => vendingMachine.AddProduct(2, 2, "Fanta", 120, 1));
+        Assert.ThrowsException<Exception>(() => vendingMachine.AddProduct(2, 2, "Fanta", 120));
+    }
+
+
+
+    [TestMethod]
+    public void AddStock_ValidInput_ProductQuantityIncreased()
+    {
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
+
+        vendingMachine.AddProduct(2, 1, "Coke", 120);
+        vendingMachine.AddStock(2, 1, 3);
+
+        Assert.AreEqual(3, vendingMachine.Products[2].Quantity);
+    }
+
+    [TestMethod]
+    public void AddStock_InvalidLocation_ArgumentExceptionThrown()
+    {
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
+
+        Assert.ThrowsException<ArgumentException>(() => vendingMachine.AddStock(9, 1, 1));
+    }
+
+    [TestMethod]
+    public void AddStock_ZeroQuantity_ArgumentExceptionThrown()
+    {
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
+
+        Assert.ThrowsException<ArgumentException>(() => vendingMachine.AddStock(1, 1, 0));
+    }
+
+    [TestMethod]
+    public void AddStock_UnconfiguredLocation_ExceptionThrown()
+    {
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
+
+        Assert.ThrowsException<Exception>(() => vendingMachine.AddStock(1, 1, 1));
+    }
+
+    [TestMethod]
+    public void AddStock_DifferentProduct_ExceptionThrown()
+    {
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
+
+        vendingMachine.AddProduct(1, 1, "Coke", 120);
+
+        Assert.ThrowsException<Exception>(() => vendingMachine.AddStock(1, 2, 1));
     }
 
 
@@ -63,9 +98,10 @@ public class VendingMachineTests
     [TestMethod]
     public void RemoveProduct_ValidInput_PoductRemoved()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
-        vendingMachine.AddProduct(2, 1, "Coke", 120, 2);
+        vendingMachine.AddProduct(2, 1, "Coke", 120);
         vendingMachine.RemoveProduct(2);
 
         Assert.IsNull(vendingMachine.Products[2]);
@@ -74,7 +110,8 @@ public class VendingMachineTests
     [TestMethod]
     public void RemoveProduct_InvalidLocation_ArgumentExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         Assert.ThrowsException<ArgumentException>(() => vendingMachine.RemoveProduct(9));
     }
@@ -82,7 +119,8 @@ public class VendingMachineTests
     [TestMethod]
     public void RemoveProduct_EmptyLocation_ExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         Assert.ThrowsException<Exception>(() => vendingMachine.RemoveProduct(0));
     }
@@ -92,7 +130,8 @@ public class VendingMachineTests
     [TestMethod]
     public void AddCoinsToBank_ValidInput_CoinsAddedToBank()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         vendingMachine.AddCoinsToBank(10, 2);
 
@@ -102,7 +141,8 @@ public class VendingMachineTests
     [TestMethod]
     public void AddCoinsToBank_InvalidCoin_ExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         Assert.ThrowsException<ArgumentException>(() => vendingMachine.AddCoinsToBank(11, 1));
     }
@@ -112,7 +152,8 @@ public class VendingMachineTests
     [TestMethod]
     public void WithdrawCoinsFromBank_ValidInput_CoinCountsReduced()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         vendingMachine.AddCoinsToBank(10, 2);
         vendingMachine.WithdrawCoinsFromBank(10, 2);
@@ -123,7 +164,8 @@ public class VendingMachineTests
     [TestMethod]
     public void WithdrawCoinsFromBank_InvalidCoin_ArgumentExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         Assert.ThrowsException<ArgumentException>(() => vendingMachine.WithdrawCoinsFromBank(11, 1));
     }
@@ -131,7 +173,8 @@ public class VendingMachineTests
     [TestMethod]
     public void WithdrawCoinsFromBank_InvalidQuantity_ExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         vendingMachine.AddCoinsToBank(10, 2);
 
@@ -143,7 +186,8 @@ public class VendingMachineTests
     [TestMethod]
     public void InsertCoin_ValidInput_BalanceIncreased()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         vendingMachine.InsertCoin(20);
         vendingMachine.InsertCoin(5);
@@ -156,39 +200,58 @@ public class VendingMachineTests
     [TestMethod]
     public void PurchaseProduct_ValidInput_CorrectProductOutput()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
-        vendingMachine.AddProduct(0, 1, "Coke", 120, 1);
+        vendingMachine.AddProduct(0, 1, "Coke", 120);
+        vendingMachine.AddStock(0, 1, 1);
         vendingMachine.InsertCoin(20);
         vendingMachine.InsertCoin(100);
 
         Assert.AreEqual("Coke", vendingMachine.PurchaseProduct(0));
         Assert.AreEqual(0, vendingMachine.Balance);
-        Assert.IsNull(vendingMachine.Products[0]);
+        Assert.AreEqual(0, vendingMachine.Products[0].Quantity);
     }
 
     [TestMethod]
     public void PurchaseProduct_InvalidLocation_ArgumentExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         Assert.ThrowsException<ArgumentException>(() => vendingMachine.PurchaseProduct(9));
     }
 
     [TestMethod]
-    public void PurchaseProduct_EmptyLocation_ExceptionThrown()
+    public void PurchaseProduct_UnconfiguredLocation_ExceptionThrown()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         Assert.ThrowsException<Exception>(() => vendingMachine.PurchaseProduct(1));
     }
 
     [TestMethod]
+    public void PurchaseProduct_ZeroQuantity_ErrorMessageOutput()
+    {
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
+
+        vendingMachine.AddProduct(0, 1, "Coke", 120);
+        vendingMachine.InsertCoin(100);
+        vendingMachine.InsertCoin(20);
+
+        Assert.AreEqual("Product is out of stock", vendingMachine.PurchaseProduct(0));
+    }
+
+    [TestMethod]
     public void PurchaseProduct_InsufficientBalance_ErrorMessageOutput()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
-        vendingMachine.AddProduct(0, 1, "Coke", 120, 5);
+        vendingMachine.AddProduct(0, 1, "Coke", 120);
+        vendingMachine.AddStock(0, 1, 5);
         vendingMachine.InsertCoin(100);
 
         Assert.AreEqual("Insufficient balance", vendingMachine.PurchaseProduct(0));
@@ -199,7 +262,8 @@ public class VendingMachineTests
     [TestMethod]
     public void EjectChange_ValidInput_CorrectChangeGiven()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
         vendingMachine.InsertCoin(100);
         vendingMachine.InsertCoin(10);
@@ -223,9 +287,11 @@ public class VendingMachineTests
     [TestMethod]
     public void EjectChange_InsufficientFundsInBank_CompromiseChangeGiven()
     {
-        VendingMachine vendingMachine = new VendingMachine();
+        int[] denominations = { 1, 2, 5, 10, 20, 50, 100, 200 };
+        VendingMachine vendingMachine = new VendingMachine(denominations);
 
-        vendingMachine.AddProduct(0, 1, "Coke", 120, 1);
+        vendingMachine.AddProduct(0, 1, "Coke", 120);
+        vendingMachine.AddStock(0, 1, 1);
         vendingMachine.InsertCoin(200);
         vendingMachine.InsertCoin(10);
         vendingMachine.InsertCoin(10);
