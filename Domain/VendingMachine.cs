@@ -135,18 +135,12 @@ public class VendingMachine
 
     public Dictionary<int, int> EjectChange()
     {
-        Dictionary<int, int> change = new Dictionary<int, int>()
+        Dictionary<int, int> change = new Dictionary<int, int>();
+        foreach (int key in Bank.Keys)
         {
-            {1, 0 },
-            {2, 0 },
-            {5, 0 },
-            {10, 0 },
-            {20, 0 },
-            {50, 0 },
-            {100, 0 },
-            {200, 0 }
-        };
-        foreach (int coin in change.Keys.Reverse())
+            change[key] = 0;
+        }
+        foreach (int coin in change.Keys.OrderDescending())
         {
             change[coin] = Balance / coin;
             if (Bank[coin] >= change[coin])
